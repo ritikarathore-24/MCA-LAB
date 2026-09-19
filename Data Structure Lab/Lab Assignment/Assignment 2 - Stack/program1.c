@@ -82,7 +82,7 @@ int main()
 
     do
     {
-        printf("\n===== STACK MENU =====\n");
+        printf("\nSTACK MENU\n");
         printf("1. Push\n");
         printf("2. Pop\n");
         printf("3. Peek\n");
