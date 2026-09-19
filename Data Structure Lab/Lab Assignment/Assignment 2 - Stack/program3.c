@@ -25,7 +25,7 @@ char pop()
 // Function to return precedence of an operator
 int precedence(char operator)
 {
-    if(operator == '^')
+    if(operator == '^' || operator == '$')
         return 3;
     else if(operator == '*' || operator == '/' || operator == '%')
         return 2;
