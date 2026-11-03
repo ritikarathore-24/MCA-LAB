@@ -1,205 +1,160 @@
+
 #include <stdio.h>
 
 int main()
 {
-    int n, i, j;
-
-    float totalFrequency = 0;
-    float sumFX = 0;
+    int n, i, j, medianIndex, modeIndex = 0;
+    float totalF = 0, totalX = 0, totalFX = 0;
     float mean, median, mode;
+    float medianPosition, h, f0, f1, f2, prevCF;
 
-    // Taking number of classes
-    printf("Enter the number of classes: ");
+    printf("Enter how many data you want to enter: ");
     scanf("%d", &n);
 
-    float lower[n];
-    float upper[n];
-    float f[n];
-    float x[n];
-    float fx[n];
-    float cf[n];
-
-    // Taking class intervals
-    printf("\nEnter the class intervals:\n");
-
-    for (i = 0; i < n; i++)
+    if(n <= 0)
     {
-        printf("\nClass %d\n", i + 1);
+        printf("Invalid number of data!");
+        return 0;
+    }
 
-        printf("Lower limit = ");
+    float lower[n], upper[n], f[n], cf[n], x[n], fx[n];
+
+    // Input Lower Limits
+    printf("Enter Lower Limits: ");
+    for(i = 0; i < n; i++)
+    {
         scanf("%f", &lower[i]);
+    }
 
-        printf("Upper limit = ");
+    // Input Upper Limits
+    printf("Enter Upper Limits: ");
+    for(i = 0; i < n; i++)
+    {
         scanf("%f", &upper[i]);
-    }
 
-    // Taking frequencies
-    printf("\nEnter the frequencies:\n");
-
-    for (i = 0; i < n; i++)
-    {
-        printf("F[%d] = ", i + 1);
-        scanf("%f", &f[i]);
-    }
-
-    // Sorting class intervals in ascending order
-    // Frequencies are also exchanged accordingly
-    for (i = 0; i < n - 1; i++)
-    {
-        for (j = i + 1; j < n; j++)
+        if(upper[i] <= lower[i])
         {
-            if (lower[i] > lower[j])
-            {
-                float temp;
-
-                temp = lower[i];
-                lower[i] = lower[j];
-                lower[j] = temp;
-
-                temp = upper[i];
-                upper[i] = upper[j];
-                upper[j] = temp;
-
-                temp = f[i];
-                f[i] = f[j];
-                f[j] = temp;
-            }
+            printf("Invalid class interval!");
+            return 0;
         }
     }
 
-    // Calculate midpoint, FX, CF, total frequency and sum of FX
-    for (i = 0; i < n; i++)
+    // Input Frequencies
+    printf("Enter F values: ");
+    for(i = 0; i < n; i++)
     {
-        // Midpoint
-        x[i] = (lower[i] + upper[i]) / 2.0;
+        scanf("%f", &f[i]);
 
-        // FX
+        if(f[i] < 0)
+        {
+            printf("Invalid frequency!");
+            return 0;
+        }
+    }
+
+    // Calculate X, FX, CF and totals
+    for(i = 0; i < n; i++)
+    {
+        x[i] = (lower[i] + upper[i]) / 2;
         fx[i] = x[i] * f[i];
 
-        // Cumulative frequency
-        if (i == 0)
-        {
+        if(i == 0)
             cf[i] = f[i];
-        }
         else
-        {
             cf[i] = cf[i - 1] + f[i];
-        }
 
-        totalFrequency += f[i];
-        sumFX += fx[i];
+        totalF += f[i];
+        totalX += x[i];
+        totalFX += fx[i];
+    }
+
+    if(totalF == 0)
+    {
+        printf("\nTotal frequency cannot be zero!");
+        return 0;
     }
 
     // Calculate Mean
-    mean = sumFX / totalFrequency;
+    mean = totalFX / totalF;
 
     // Calculate Median
-    float medianPosition = totalFrequency / 2.0;
-    int medianClass = 0;
+    medianPosition = totalF / 2.0;
 
-    for (i = 0; i < n; i++)
+    for(i = 0; i < n; i++)
     {
-        if (cf[i] >= medianPosition)
+        if(cf[i] >= medianPosition)
         {
-            medianClass = i;
+            medianIndex = i;
             break;
         }
     }
 
-    float previousCF;
-
-    if (medianClass == 0)
-    {
-        previousCF = 0;
-    }
+    if(medianIndex == 0)
+        prevCF = 0;
     else
-    {
-        previousCF = cf[medianClass - 1];
-    }
+        prevCF = cf[medianIndex - 1];
 
-    float classWidth =
-        upper[medianClass] - lower[medianClass];
+    h = upper[medianIndex] - lower[medianIndex];
 
-    median = lower[medianClass] +
-             ((medianPosition - previousCF) /
-              f[medianClass]) * classWidth;
+    median = lower[medianIndex] +
+             ((medianPosition - prevCF) / f[medianIndex]) * h;
 
     // Calculate Mode
-    int modalClass = 0;
-
-    for (i = 1; i < n; i++)
+    for(i = 1; i < n; i++)
     {
-        if (f[i] > f[modalClass])
-        {
-            modalClass = i;
-        }
+        if(f[i] > f[modeIndex])
+            modeIndex = i;
     }
 
-    float previousFrequency;
-    float nextFrequency;
+    f1 = f[modeIndex];
 
-    if (modalClass == 0)
+    if(modeIndex == 0)
+        f0 = 0;
+    else
+        f0 = f[modeIndex - 1];
+
+    if(modeIndex == n - 1)
+        f2 = 0;
+    else
+        f2 = f[modeIndex + 1];
+
+    h = upper[modeIndex] - lower[modeIndex];
+
+    if((2 * f1 - f0 - f2) != 0)
     {
-        previousFrequency = 0;
+        mode = lower[modeIndex] +
+               ((f1 - f0) / (2 * f1 - f0 - f2)) * h;
     }
     else
     {
-        previousFrequency = f[modalClass - 1];
+        mode = x[modeIndex];
     }
 
-    if (modalClass == n - 1)
+    // Display Output Table
+
+    printf("%-18s %12s %12s %12s %12s\n",
+           "Interval", "F", "CF", "X", "FX");
+
+    printf("--------------------------------------------------------------------------\n");
+
+    for(i = 0; i < n; i++)
     {
-        nextFrequency = 0;
-    }
-    else
-    {
-        nextFrequency = f[modalClass + 1];
+        printf("%7.2f - %-7.2f %12.2f %12.2f %12.2f %12.2f\n",
+               lower[i], upper[i], f[i], cf[i], x[i], fx[i]);
     }
 
-    float modalClassWidth =
-        upper[modalClass] - lower[modalClass];
+    printf("--------------------------------------------------------------------------\n");
 
-    mode = lower[modalClass] +
-           ((f[modalClass] - previousFrequency) /
-            ((2 * f[modalClass]) -
-             previousFrequency -
-             nextFrequency)) * modalClassWidth;
+    printf("%18s %12s %12s %12s %12s\n",
+           "", "EF=", "", "EX=", "EFX=");
 
-    // Display table
-    printf("\n\nCONTINUOUS SERIES\n\n");
+    printf("%18s %12.2f %12s %12.2f %12.2f\n",
+           "", totalF, "", totalX, totalFX);
 
-    printf("%-20s %12s %12s %12s %12s\n",
-           "Class Interval",
-           "Frequency",
-           "X",
-           "FX",
-           "CF");
-
-    // Display each row
-    for (i = 0; i < n; i++)
-    {
-        char interval[30];
-
-        // Create complete class interval as one string
-        sprintf(interval, "%.2f - %.2f",
-                lower[i], upper[i]);
-
-        printf("%-20s %12.2f %12.2f %12.2f %12.2f\n",
-               interval,
-               f[i],
-               x[i],
-               fx[i],
-               cf[i]);
-    }
-
-    // Display totals separately
-    printf("\nTotal Frequency (N) = %.2f\n", totalFrequency);
-    printf("Sum of FX = %.2f\n", sumFX);
-
-    // Display results
-    printf("\nMean   = %.2f\n", mean);
-    printf("Median = %.2f\n", median);
-    printf("Mode   = %.2f\n", mode);
+    // Display Results
+    printf("Arithmetic mean using continuous series = %.2f\n", mean);
+    printf("Median using continuous series = %.2f\n", median);
+    printf("Mode using continuous series = %.2f\n", mode);
 
     return 0;
 }

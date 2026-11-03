@@ -1,88 +1,88 @@
-//Program to calculate mean, median and mode in an individual series
 
 #include <stdio.h>
-int main ()
-{
-    int n, i, j;
-    double temp;
-    double sum = 0;
-    int count, maxCount=0;
-    double mean, median, mode;
 
-    printf("Enter the number of observations:");
+int main()
+{
+    int n, i, j, count, maxCount = 0;
+    float sum = 0, mean, median, mode;
+
+    printf("Enter how many value you want to enter: ");
     scanf("%d", &n);
 
-    double a[n];
+    float x[n], temp, sorted[n];
 
-    printf("Enter the observations:\n");
-
-    for (i=0; i<n; i++)
+    // Input numbers
+    for(i = 0; i < n; i++)
     {
-        scanf("%lf", &a[i]);
+        printf("Enter number %d : ", i + 1);
+        scanf("%f", &x[i]);
+
+        sum += x[i];
+        sorted[i] = x[i];
     }
 
     // Calculate Mean
+    mean = sum / n;
 
-    for (i=0; i<n; i++)
+    // Sort values for Median
+    for(i = 0; i < n - 1; i++)
     {
-        sum = sum+a[i];
-    }
-
-    mean = sum/n;
-
-    printf("Mean of the individual series: %.2lf\n", mean);
-
-    // Arrange the elements in the ascending order
-
-    for(i=0; i<n-1; i++)
-    {
-        for (j=0; j<n-i-1; j++)
+        for(j = i + 1; j < n; j++)
         {
-            if(a[j] > a[j+1])
+            if(sorted[i] > sorted[j])
             {
-                temp = a[j];
-                a[j] = a[j+1];
-                a[j+1] = temp;
+                temp = sorted[i];
+                sorted[i] = sorted[j];
+                sorted[j] = temp;
             }
         }
     }
 
     // Calculate Median
-    if(n%2!=0)
+    if(n % 2 == 0)
     {
-        median = a[n/2];
+        median = (sorted[n/2 - 1] + sorted[n/2]) / 2;
     }
     else
     {
-        median = (a[n/2-1] + a[n/2]) / 2.0;
+        median = sorted[n/2];
     }
-
-    printf("Median of the individual series: %.2lf\n", median);
 
     // Calculate Mode
-
-    for (i=0; i<n; i++)
+    for(i = 0; i < n; i++)
     {
-        count = 1;
-        while (i+1<n && a[i] == a[i+1])
+        count = 0;
+
+        for(j = 0; j < n; j++)
         {
-            count++;
-            i++;
+            if(x[i] == x[j])
+            {
+                count++;
+            }
         }
-        if (count>maxCount)
+
+        if(count > maxCount)
         {
             maxCount = count;
-            mode = a[i];
+            mode = x[i];
         }
     }
-    if (maxCount == 1)
+
+    // Display entered values
+    printf("\n\tX\n");
+
+    for(i = 0; i < n; i++)
     {
-        printf("Mode of the individual series: No mode\n");
+        printf("\t%.2f\n", x[i]);
     }
-    else 
-    {
-        printf("Mode of individual series: %.2lf\n", mode);
-    }
+
+    printf("\t-----\n");
+    printf("\tEX=%.2f\n", sum);
+
+    // Display results
+    printf("Arithmetic mean using individual series is = %.2f\n", mean);
+    printf("Median using individual series is = %.2f\n", median);
+    printf("Mode using individual series is = %.2f\n", mode);
 
     return 0;
 }

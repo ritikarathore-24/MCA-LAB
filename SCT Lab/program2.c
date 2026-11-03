@@ -1,43 +1,38 @@
+
 #include <stdio.h>
 
 int main()
 {
-    int n, i, j;
+    int n, i, j, modeIndex = 0;
 
-    float totalFrequency = 0;
-    float sumFX = 0;
-    float mean, median, mode;
+    float totalX = 0, totalF = 0, totalFX = 0;
+    float mean, median, mode, medianPosition;
 
-    // Taking number of observations
-    printf("Enter the number of observations: ");
+    printf("Enter how many values you want to enter: ");
     scanf("%d", &n);
 
-    float x[n];
-    float f[n];
-    float fx[n];
-    float cf[n];
+    float x[n], f[n], fx[n], cf[n];
 
-    // Taking X values and frequencies
-    printf("\nEnter the values of X and their frequencies:\n\n");
-
-    for (i = 0; i < n; i++)
+    // Input X values
+    printf("Enter X values: ");
+    for(i = 0; i < n; i++)
     {
-        printf("Enter X[%d]: ", i + 1);
         scanf("%f", &x[i]);
-
-        printf("Enter Frequency[%d]: ", i + 1);
-        scanf("%f", &f[i]);
-
-        printf("\n");
     }
 
-    // Sorting X values in ascending order
-    // Frequencies are also exchanged accordingly
-    for (i = 0; i < n - 1; i++)
+    // Input frequencies
+    printf("Enter F values: ");
+    for(i = 0; i < n; i++)
     {
-        for (j = i + 1; j < n; j++)
+        scanf("%f", &f[i]);
+    }
+
+    // Sort X values and their frequencies
+    for(i = 0; i < n - 1; i++)
+    {
+        for(j = i + 1; j < n; j++)
         {
-            if (x[i] > x[j])
+            if(x[i] > x[j])
             {
                 float temp;
 
@@ -52,36 +47,30 @@ int main()
         }
     }
 
-    // Calculate FX, CF, total frequency and sum of FX
-    for (i = 0; i < n; i++)
+    // Calculate FX, CF and totals
+    for(i = 0; i < n; i++)
     {
-        // Calculate FX
         fx[i] = x[i] * f[i];
 
-        // Calculate cumulative frequency
-        if (i == 0)
-        {
+        if(i == 0)
             cf[i] = f[i];
-        }
         else
-        {
             cf[i] = cf[i - 1] + f[i];
-        }
 
-        totalFrequency += f[i];
-        sumFX += fx[i];
+        totalX += x[i];
+        totalF += f[i];
+        totalFX += fx[i];
     }
 
     // Calculate Mean
-    mean = sumFX / totalFrequency;
+    mean = totalFX / totalF;
 
-    // Calculate Median using professor's formula
-    // Median position = (N + 1) / 2
-    float medianPosition = (totalFrequency + 1) / 2.0;
+    // Calculate Median
+    medianPosition = (totalF + 1) / 2.0;
 
-    for (i = 0; i < n; i++)
+    for(i = 0; i < n; i++)
     {
-        if (cf[i] >= medianPosition)
+        if(cf[i] >= medianPosition)
         {
             median = x[i];
             break;
@@ -89,12 +78,9 @@ int main()
     }
 
     // Calculate Mode
-    // Mode is the X value having the highest frequency
-    int modeIndex = 0;
-
-    for (i = 1; i < n; i++)
+    for(i = 1; i < n; i++)
     {
-        if (f[i] > f[modeIndex])
+        if(f[i] > f[modeIndex])
         {
             modeIndex = i;
         }
@@ -103,32 +89,25 @@ int main()
     mode = x[modeIndex];
 
     // Display the table
-    printf("\n\nDISCRETE SERIES\n\n");
 
-    printf("%-12s %12s %12s %12s\n",
-           "X",
-           "Frequency",
-           "FX",
-           "CF");
+    printf("\tX\t\tF\t\tFX\t\tCF\n");
+    printf("------------------------------------------------------------\n");
 
-    // Display table rows
-    for (i = 0; i < n; i++)
+    for(i = 0; i < n; i++)
     {
-        printf("%-12.2f %12.2f %12.2f %12.2f\n",
-               x[i],
-               f[i],
-               fx[i],
-               cf[i]);
+        printf("\t%.0f\t\t%.0f\t\t%.0f\t\t%.0f\n",
+               x[i], f[i], fx[i], cf[i]);
     }
 
-    // Display total frequency and sum of FX
-    printf("\nTotal Frequency (N) = %.2f\n", totalFrequency);
-    printf("Sum of FX = %.2f\n", sumFX);
+    printf("------------------------------------------------------------\n");
+
+    printf("\tEX=%.0f\t\tEF=%.0f\t\tEFX=%.0f\n",
+           totalX, totalF, totalFX);
 
     // Display results
-    printf("\nMean   = %.2f\n", mean);
-    printf("Median = %.2f\n", median);
-    printf("Mode   = %.2f\n", mode);
+    printf("Arithmetic mean using discrete series = %.2f\n", mean);
+    printf("Median using discrete series = %.2f\n", median);
+    printf("Mode using discrete series = %.2f\n", mode);
 
     return 0;
 }
