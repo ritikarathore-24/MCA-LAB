@@ -14,7 +14,8 @@ int main()
     for(i = 0; i < n; i++)
         scanf("%d", &a[i]);
 
-    largest = second = -2147483647;
+    largest = a[0];
+    second = a[0];
 
     for(i = 0; i < n; i++)
     {
@@ -29,10 +30,7 @@ int main()
         }
     }
 
-    if(second == -2147483647)
-        printf("Second largest element does not exist");
-    else
-        printf("Second largest element = %d", second);
+    printf("Second largest element = %d", second);
 
     return 0;
 }
